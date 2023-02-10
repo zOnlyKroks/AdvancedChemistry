@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "advancedchemistry",
+  "version": "${version}",
+  "name": "Advancedchemistry",
+  "description": "",
+  "authors": [
+    "zOnlyKroks"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "de.zonlykroks.advancedchemistry.client.AdvancedChemistryClient"
+    ],
+    "main": [
+      "de.zonlykroks.advancedchemistry.AdvancedChemistry"
+    ]
+  },
+  "mixins": [
+    "advancedchemistry.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.14",
+    "fabric": "*",
+    "minecraft": "1.19.2"
+  }
+}

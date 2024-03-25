@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.1-SNAPSHOT'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'maven-publish'
 }
 
@@ -15,18 +15,9 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-    modImplementation "io.wispforest:owo-lib:${project.owo_version}"
-    // only if you plan to use owo-config
-    annotationProcessor "io.wispforest:owo-lib:${project.owo_version}"
-
-    // include this if you don't want force your users to install owo
-    // sentinel will warn them and give the option to download it automatically
-    include "io.wispforest:owo-sentinel:${project.owo_version}"
-
-    annotationProcessor modImplementation("io.wispforest:owo-lib:${project.owo_version}")
-
-    implementation 'blue.endless:jankson:1.1.1'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.17.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+    implementation 'org.json:json:20240303'
 }
 
 processResources {
@@ -68,19 +59,6 @@ jar {
     }
 }
 
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
-    }
+fabricApi {
+    configureDataGeneration()
 }

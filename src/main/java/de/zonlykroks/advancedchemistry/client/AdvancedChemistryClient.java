@@ -8,6 +8,5 @@ import net.fabricmc.api.Environment;
 public class AdvancedChemistryClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-
     }
 }

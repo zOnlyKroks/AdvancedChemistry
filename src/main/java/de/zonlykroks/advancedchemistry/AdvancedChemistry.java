@@ -1,90 +1,55 @@
 package de.zonlykroks.advancedchemistry;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import de.zonlykroks.advancedchemistry.config.AdvancedChemistryConfigModel;
-import de.zonlykroks.advancedchemistry.config.AdvancedChemistryWrapper;
-import de.zonlykroks.advancedchemistry.items.ElementItem;
+import de.zonlykroks.advancedchemistry.blocks.BlockInit;
+import de.zonlykroks.advancedchemistry.config.ChemItemPropertyConfig;
+import de.zonlykroks.advancedchemistry.config.SimpleChemConfig;
+import de.zonlykroks.advancedchemistry.element.Element;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class AdvancedChemistry implements ModInitializer {
 
-    public static final AdvancedChemistryWrapper CONFIG = AdvancedChemistryWrapper.createAndLoad();
+    public static final SimpleChemConfig itemConfig = new SimpleChemConfig();
+    public static final ChemItemPropertyConfig rarityConfig = new ChemItemPropertyConfig();
 
-    public static final Map<Integer,ElementItem> elementItemMap = new HashMap<>();
-    public static final String MODID = "advancedchemistry";
+    //Identifier, Mapped to registered Element
+    public static final Map<Identifier, Element> registryNameElementToElement = new HashMap<>();
 
-    public static final ItemGroup customItemGroup = FabricItemGroupBuilder.create(new Identifier(MODID,"tab")).build();
-
-    public static URL elementURL;
-    private static File elementFile;
-    private static File configDir;
+    private static final ItemGroup ADVANCED_CHEMISTRY_CREATIVE_GROUP = FabricItemGroup.builder()
+            .icon(() -> new ItemStack(Blocks.GLASS))
+            .displayName(Text.translatable("itemGroup.advancedchemistry.creative_group"))
+            .entries((displayContext, entries) -> {
+                registryNameElementToElement.forEach((identifier, element) -> {
+                    entries.add(new ItemStack(element));
+                });
+            })
+            .build();
 
     @Override
     public void onInitialize() {
-        try {
-            elementURL = new URL("https://raw.githubusercontent.com/Bowserinator/Periodic-Table-JSON/master/PeriodicTableJSON.json");
-            configDir = new File(FabricLoader.getInstance().getConfigDir() + "/AdvancedChemistry/");
-            elementFile = new File(configDir + "/elements.json");
+        itemConfig.loadOrCreateConfig();
+        itemConfig.convertCSVToJSON(itemConfig.configFileCSV);
+        itemConfig.convertJSONToString();
 
-            downloadFile(elementFile);
-            registerItems();
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+        itemConfig.parseItems();
 
-    private void downloadFile(File file) throws Exception {
-        if(!configDir.exists())
-            configDir.mkdirs();
+        rarityConfig.loadOrCreateConfig();
+        rarityConfig.loadAndChangeItemProperties();
 
-        if(!file.exists())
-            file.createNewFile();
+        new BlockInit();
 
-        InputStream input = elementURL.openStream();
-        FileOutputStream outputStream = new FileOutputStream(file);
-
-        byte[] buffer = new byte[4096];
-
-        int n = 0;
-
-        while(-1 != (n = input.read(buffer))) {
-            outputStream.write(buffer,0,n);
-        }
-
-        input.close();
-        outputStream.close();
-    }
-
-    public void registerItems() throws Exception {
-        JsonObject object = JsonParser.parseReader(new FileReader(elementFile)).getAsJsonObject();
-
-        JsonArray array = object.getAsJsonArray("elements");
-
-        for(JsonElement jsonElement : array) {
-            JsonObject subObject = jsonElement.getAsJsonObject();
-
-            String name = subObject.get("name").getAsString();
-            int elementNumber = subObject.get("number").getAsInt();
-
-            ElementItem elementItem = new ElementItem(name,elementNumber);
-            Registry.register(Registry.ITEM,new Identifier(AdvancedChemistry.MODID,name.toLowerCase()),elementItem);
-            elementItemMap.putIfAbsent(elementNumber,elementItem);
-        }
+        Registry.register(Registries.ITEM_GROUP, new Identifier("advancedchemistry", "creative_group"), ADVANCED_CHEMISTRY_CREATIVE_GROUP);
     }
 }

@@ -4,6 +4,9 @@
   "package": "de.zonlykroks.advancedchemistry.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "EntityMixin",
+    "ItemEntityMixin",
+    "ItemPropertiesMixin"
   ],
   "client": [
   ],

@@ -9,5 +9,6 @@ public class AdvancedChemistryDatagen implements DataGeneratorEntrypoint {
         FabricDataGenerator.Pack pack = generator.createPack();
 
         pack.addProvider(AdvancedChemistryModelGenerator::new);
+        pack.addProvider(AdvancedChemistryLanguageGenerator::new);
     }
 }

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "advancedchemistry:block/borax_ore_down",
+    "east": "advancedchemistry:block/borax_ore_east",
+    "north": "advancedchemistry:block/borax_ore_north",
+    "particle": "advancedchemistry:block/borax_ore_particle",
+    "south": "advancedchemistry:block/borax_ore_south",
+    "up": "advancedchemistry:block/borax_ore_up",
+    "west": "advancedchemistry:block/borax_ore_west"
+  }
+}

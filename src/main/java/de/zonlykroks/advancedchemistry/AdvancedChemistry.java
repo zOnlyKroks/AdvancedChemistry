@@ -4,11 +4,12 @@ import de.zonlykroks.advancedchemistry.blocks.BlockInit;
 import de.zonlykroks.advancedchemistry.config.ChemItemPropertyConfig;
 import de.zonlykroks.advancedchemistry.config.SimpleChemConfig;
 import de.zonlykroks.advancedchemistry.element.Element;
+import de.zonlykroks.advancedchemistry.util.ParsingUtils;
+import de.zonlykroks.advancedchemistry.util.ReflectionUtil;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -16,8 +17,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class AdvancedChemistry implements ModInitializer {
 
@@ -31,9 +31,17 @@ public class AdvancedChemistry implements ModInitializer {
             .icon(() -> new ItemStack(Blocks.GLASS))
             .displayName(Text.translatable("itemGroup.advancedchemistry.creative_group"))
             .entries((displayContext, entries) -> {
-                registryNameElementToElement.forEach((identifier, element) -> {
+                List<Element> elementList = new ArrayList<>(registryNameElementToElement.values());
+
+                Collections.sort(elementList, Comparator.comparingInt(o -> o.atomicNumber));
+
+                for(Element element : elementList) {
                     entries.add(new ItemStack(element));
-                });
+                }
+
+                for(Block block : ReflectionUtil.collectBlockFieldsFromClass(BlockInit.class)) {
+                    entries.add(new ItemStack(block));
+                }
             })
             .build();
 
@@ -43,12 +51,12 @@ public class AdvancedChemistry implements ModInitializer {
         itemConfig.convertCSVToJSON(itemConfig.configFileCSV);
         itemConfig.convertJSONToString();
 
-        itemConfig.parseItems();
+        ParsingUtils.parseItems(itemConfig.jsonFileContent);
 
         rarityConfig.loadOrCreateConfig();
         rarityConfig.loadAndChangeItemProperties();
 
-        new BlockInit();
+        BlockInit.init();
 
         Registry.register(Registries.ITEM_GROUP, new Identifier("advancedchemistry", "creative_group"), ADVANCED_CHEMISTRY_CREATIVE_GROUP);
     }

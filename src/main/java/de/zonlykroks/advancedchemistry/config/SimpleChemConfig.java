@@ -89,17 +89,6 @@ public class SimpleChemConfig {
        this.jsonFileContent = "";
     }
 
-    public void parseItems() {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        try {
-            List<Element> elements = objectMapper.readValue(this.jsonFileContent, new TypeReference<>() {});
-            elements.forEach(Element::convertAndRegisterToItem);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @NotNull
     private static List<Map<String, String>> getMaps(File csvFile) throws IOException {
         InputStream in = new FileInputStream(csvFile);

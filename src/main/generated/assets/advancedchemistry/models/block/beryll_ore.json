@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "advancedchemistry:block/beryll_ore_down",
+    "east": "advancedchemistry:block/beryll_ore_east",
+    "north": "advancedchemistry:block/beryll_ore_north",
+    "particle": "advancedchemistry:block/beryll_ore_particle",
+    "south": "advancedchemistry:block/beryll_ore_south",
+    "up": "advancedchemistry:block/beryll_ore_up",
+    "west": "advancedchemistry:block/beryll_ore_west"
+  }
+}

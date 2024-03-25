@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "advancedchemistry:spodumene_ore"
+    "advancedchemistry:spodumene_ore",
+    "advancedchemistry:beryll_ore",
+    "advancedchemistry:borax_ore",
+    "advancedchemistry:halite_ore"
   ]
 }

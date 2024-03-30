@@ -10,5 +10,6 @@ public class AdvancedChemistryDatagen implements DataGeneratorEntrypoint {
 
         pack.addProvider(AdvancedChemistryModelGenerator::new);
         pack.addProvider(AdvancedChemistryLanguageGenerator::new);
+        pack.addProvider(AdvancedChemistryLootTableGenerator::new);
     }
 }

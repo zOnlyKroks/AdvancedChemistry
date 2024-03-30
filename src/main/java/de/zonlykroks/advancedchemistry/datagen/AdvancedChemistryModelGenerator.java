@@ -2,6 +2,8 @@ package de.zonlykroks.advancedchemistry.datagen;
 
 import de.zonlykroks.advancedchemistry.AdvancedChemistry;
 import de.zonlykroks.advancedchemistry.blocks.BlockInit;
+import de.zonlykroks.advancedchemistry.blocks.machine.MachineBlock;
+import de.zonlykroks.advancedchemistry.blocks.machine.MachineRegistry;
 import de.zonlykroks.advancedchemistry.config.SimpleChemConfig;
 import de.zonlykroks.advancedchemistry.util.ParsingUtils;
 import de.zonlykroks.advancedchemistry.util.ReflectionUtil;
@@ -22,6 +24,10 @@ public class AdvancedChemistryModelGenerator extends FabricModelProvider {
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
         for(Block block : ReflectionUtil.collectBlockFieldsFromClass(BlockInit.class)) {
+            blockStateModelGenerator.registerSimpleCubeAll(block);
+        }
+
+        for(Block block : ReflectionUtil.collectBlockFieldsFromClass(MachineRegistry.class)) {
             blockStateModelGenerator.registerGeneric(block);
         }
     }

@@ -12,11 +12,6 @@ public class HaliteOre extends OreBlock {
     }
 
     @Override
-    public void setupOreGen() {
-        BiomeModifications.addFeature(BiomeSelectors.foundInOverworld(), GenerationStep.Feature.UNDERGROUND_ORES, CUSTOM_ORE_PLACED_KEY);
-    }
-
-    @Override
     public String name() {
         return "halite_ore";
     }

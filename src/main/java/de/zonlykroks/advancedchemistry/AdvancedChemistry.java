@@ -1,11 +1,13 @@
 package de.zonlykroks.advancedchemistry;
 
 import de.zonlykroks.advancedchemistry.blocks.BlockInit;
+import de.zonlykroks.advancedchemistry.blocks.machine.MachineRegistry;
 import de.zonlykroks.advancedchemistry.config.ChemItemPropertyConfig;
 import de.zonlykroks.advancedchemistry.config.SimpleChemConfig;
 import de.zonlykroks.advancedchemistry.element.Element;
 import de.zonlykroks.advancedchemistry.util.ParsingUtils;
 import de.zonlykroks.advancedchemistry.util.ReflectionUtil;
+import de.zonlykroks.advancedchemistry.util.annotation.AnnotationProcessor;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.block.Block;
@@ -26,6 +28,7 @@ public class AdvancedChemistry implements ModInitializer {
 
     //Identifier, Mapped to registered Element
     public static final Map<Identifier, Element> registryNameElementToElement = new HashMap<>();
+    public static final List<Block> toPlaceInGroup = new ArrayList<>();
 
     private static final ItemGroup ADVANCED_CHEMISTRY_CREATIVE_GROUP = FabricItemGroup.builder()
             .icon(() -> new ItemStack(Blocks.GLASS))
@@ -33,15 +36,13 @@ public class AdvancedChemistry implements ModInitializer {
             .entries((displayContext, entries) -> {
                 List<Element> elementList = new ArrayList<>(registryNameElementToElement.values());
 
-                Collections.sort(elementList, Comparator.comparingInt(o -> o.atomicNumber));
+                elementList.sort(Comparator.comparingInt(o -> o.atomicNumber));
 
                 for(Element element : elementList) {
                     entries.add(new ItemStack(element));
                 }
 
-                for(Block block : ReflectionUtil.collectBlockFieldsFromClass(BlockInit.class)) {
-                    entries.add(new ItemStack(block));
-                }
+                toPlaceInGroup.forEach(block -> entries.add(new ItemStack(block)));
             })
             .build();
 
@@ -56,7 +57,7 @@ public class AdvancedChemistry implements ModInitializer {
         rarityConfig.loadOrCreateConfig();
         rarityConfig.loadAndChangeItemProperties();
 
-        BlockInit.init();
+        AnnotationProcessor.processAnnotations();
 
         Registry.register(Registries.ITEM_GROUP, new Identifier("advancedchemistry", "creative_group"), ADVANCED_CHEMISTRY_CREATIVE_GROUP);
     }
